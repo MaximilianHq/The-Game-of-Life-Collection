@@ -17,23 +17,13 @@ class Cell:
             raise TypeError(f"Element is not an instance of Cell.")  # raise an error
             
         # count neighbors alive
-        population = 0
-        for cell in neighbors:
-            if cell.state == True:
-                population += 1
+        population = sum(1 for cell in neighbors if cell.state)
         
         # apply gamerules
-        if population < 2 or population > 3 and self.state == True:
+        if (population < 2 or population > 3) and self.state == True:
             self.next_state = False
         elif population == 3 and self.state == False:
             self.next_state = True
 
     def update(self):
         self.state = self.next_state
-
-    def serialize(self):
-        return {"state":self.state}
-    
-    @classmethod
-    def unSerialize(cls, data:dict):
-        return cls(state=data["state"])

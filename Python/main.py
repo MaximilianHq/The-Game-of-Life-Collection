@@ -1,46 +1,57 @@
-import random, time, json, os
+import random, time, copy
 from cellgrid import Cellgrid
 import functions as function
 
-GRIDSIZE = 45
+GRIDSIZE = 8
 TICK_INTERVAL = 1 # seconds
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATAFILE = os.path.join(BASE_DIR, 'cellgrid.json')
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# DATAFILE = os.path.join(BASE_DIR, 'cellgrid.json')
 
-def validateFile(pathh:str) -> bool:
+# def validateFile(pathh:str) -> bool:
+    # if not os.path.exists(pathh):
+        # print(f"Error: {pathh} does not exist. Run the simulation first.")
+        # return False
 
-    if not os.path.exists(pathh):
-        print(f"Error: {pathh} does not exist. Run the simulation first.")
-        return False
-
-def runSimulation(cellg:Cellgrid, ticks:int):
+def runSimulation(cellg:Cellgrid, ticks:int = 10, visibility:bool = True):
     for i in range(ticks):
+        if visibility:
+            cellg.displayCellgrid()
+            time.sleep(TICK_INTERVAL)
+        cellg.updateCells()
+    # if was previously hidden
+    if not visibility:
         cellg.displayCellgrid()
-        cellg.updateCells
-        time.sleep(TICK_INTERVAL)
-        
-def mainMenu():
-    print("============\n1. run simulation\n2. simulation history\n3. exit\n============")
+        return cellg
+    
+def MenuBorder(text:str):
+    border = "================="
+    return f"\n{border}\n{text}\n{border}\n"
 
 if __name__ == "__main__":
 
     # check if the file exists and delete it
-    if os.path.exists(DATAFILE):
-        os.remove(DATAFILE)
-
-    # create cellgrid
-    cellgrid = Cellgrid(GRIDSIZE)
+    # if os.path.exists(DATAFILE):
+        # os.remove(DATAFILE)
     
     while True:
-        mainMenu()
-        men_v = int(function.inputBracket(""))
+        menu_str = "1. run GoL\n2. exit"
+        men_v = int(function.inputBracket(MenuBorder(menu_str)))
+
         if men_v == 1:
-            sim_steps = int(function.inputBracket("Simulation steps"))
-            if sim_steps > 0:
-                runSimulation(cellgrid, sim_steps)
+            cellgrid = Cellgrid(GRIDSIZE)
+            mode_str = "select mode:\n1. default\n2. simulation"
+
+            while True:
+                mode = int(function.inputBracket(MenuBorder(mode_str)))
+                sim_steps = int(function.inputBracket("simulation steps"))
+
+                if sim_steps > 0:
+                    runSimulation(cellgrid, sim_steps, False if mode == 2 else True)
+
+                    if not function.inputBracket("Continue simulation from point (y/n)?") == "y":
+                        break
+    
         elif men_v == 2:
-            pass
-        elif men_v == 3:
             exit()
         else:
             print("Not valid input")

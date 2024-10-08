@@ -43,17 +43,3 @@ class Cellgrid:
         for row in self.cellgrid:
             print(" ".join(repr(cell) for cell in row))
         print("\n")
-        
-    def SerializeGrid(self):
-        # convert to dict
-        serial_cellgrid = [[Cell.serialize() for cell in row] \
-                            for row in self.cellgrid]
-        
-        return serial_cellgrid
-
-    @classmethod
-    def unSerializeGrid(cls, grid_chunk):
-        un_serialized_cellgrid = [[Cell.unSerialize(cell_data) for cell_data in row] \
-                                    for row in grid_chunk]
-        
-        return un_serialized_cellgrid
