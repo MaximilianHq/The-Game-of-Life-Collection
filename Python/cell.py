@@ -7,6 +7,7 @@ class Cell:
         self.next_state = state
 
     def __repr__(self):
+        # represent alive cell as ascii icon
         return html.unescape("&#9632;") if self.state \
         else " " # html.unescape("&#9633;")
 

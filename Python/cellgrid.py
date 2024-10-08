@@ -20,7 +20,7 @@ class Cellgrid:
             for j, cell in enumerate(row):
                 neighbors = []
 
-                # iterate through the relative positions to gather neighbors
+                # iterate through relative positions and gather neighbors
                 for di in pos:  # delta for row
                     for dj in pos:  # delta for column
                         if di == 0 and dj == 0:
@@ -35,11 +35,13 @@ class Cellgrid:
 
                 cell.setNextState(neighbors)
         
+        # update each cell
         for row in self.cellgrid:
             for cell in row:
                 cell.update()
 
     def displayCellgrid(self):
         for row in self.cellgrid:
+            # display the representation of each cell
             print(" ".join(repr(cell) for cell in row))
         print("\n")

@@ -1,4 +1,4 @@
-import random, time, copy
+import random, time
 from cellgrid import Cellgrid
 import functions as function
 
@@ -21,7 +21,6 @@ def runSimulation(cellg:Cellgrid, ticks:int = 10, visibility:bool = True):
     # if was previously hidden
     if not visibility:
         cellg.displayCellgrid()
-        return cellg
     
 def MenuBorder(text:str):
     border = "================="
@@ -34,7 +33,7 @@ if __name__ == "__main__":
         # os.remove(DATAFILE)
     
     while True:
-        menu_str = "1. run GoL\n2. exit"
+        menu_str = "1. run GoL\n2. change exit"
         men_v = int(function.inputBracket(MenuBorder(menu_str)))
 
         if men_v == 1:
@@ -43,15 +42,21 @@ if __name__ == "__main__":
 
             while True:
                 mode = int(function.inputBracket(MenuBorder(mode_str)))
-                sim_steps = int(function.inputBracket("simulation steps"))
+                if mode == 3:
+                    continue
 
+                sim_steps = int(function.inputBracket("simulation steps"))
                 if sim_steps > 0:
                     runSimulation(cellgrid, sim_steps, False if mode == 2 else True)
 
                     if not function.inputBracket("Continue simulation from point (y/n)?") == "y":
                         break
-    
+                
         elif men_v == 2:
+            gridsize_str = "set new gridsize"
+            GRIDSIZE = int(function.inputBracket(gridsize_str))
+    
+        elif men_v == 3:
             exit()
         else:
-            print("Not valid input")
+            print("non valid input")
