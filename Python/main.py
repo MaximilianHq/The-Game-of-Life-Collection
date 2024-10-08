@@ -1,79 +1,70 @@
 import random, time, json, os
-from cell import Cell
-import functions
+from cellgrid import Cellgrid
+import functions as function
 
 GRIDSIZE = 45
 TICK_INTERVAL = 1 # seconds
-DATAFILE = 'cellmap.json'
-
-def updateCells():
-    pos = [-1,0,1] # positions arount each cell in each direction
-
-    # itterate over all cells
-    for i, row in enumerate(cellmap):
-        for j, cell in enumerate(row):
-            neighbors = []
-
-            # iterate through the relative positions to gather neighbors
-            for di in pos:  # delta for row
-                for dj in pos:  # delta for column
-                    if di == 0 and dj == 0:
-                        continue  # skip middle cell
-
-                    # calculate neighbor indices
-                    ni, nj = i + di, j + dj
-
-                    # check if the neighbor indices are within bounds
-                    if 0 <= ni < GRIDSIZE and 0 <= nj < GRIDSIZE:
-                        neighbors.append(cellmap[ni][nj])
-
-            cell.setNextState(neighbors)
-    
-    for row in cellmap:
-        for cell in row:
-            cell.update()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATAFILE = os.path.join(BASE_DIR, 'cellgrid.json')
 
 def displayCells():
-    for row in cellmap:
+    for row in cellgrid:
         print(" ".join(repr(cell) for cell in row))
     print("\n")
 
+def validateFile(pathh:str) -> bool: #TODO ?
+
+    if not os.path.exists(pathh):
+        print(f"Error: {pathh} does not exist. Run the simulation first.")
+        return False
+    
+def addToHistory(old_cellgrid):
+    pass
+
 def printToFile():
     
-    # convert to dict
-    serial_cellmap = [[cell.serialize() for cell in row] \
-                      for row in cellmap]
+    serial_cellgrid = Cellgrid.SerializeGrid(cellgrid)
 
     # save it to JSON file
     with open(DATAFILE, "a") as file:
-        json.dump(serial_cellmap, file)
+        json.dump(serial_cellgrid, file)
         file.close()
 
 def readFile():
+    if not validateFile(DATAFILE):
+        return
+
+    cellgrid_history = list()
 
     with open(DATAFILE, 'r') as file:
-        loaded_data = json.load(file)
+        loaded_data = json.load(file)  # load the entire file content
         file.close()
 
-    # convert to cellmap
-    loaded_cellmap = [[Cell.from_dict(cell_data) for cell_data in row] \
-                      for row in loaded_data]
-    
-    return loaded_cellmap
+    # process the data in chunks of GRIDSIZE rows
+    for i in range(0, len(loaded_data), GRIDSIZE):
+        # extract up to GRIDSIZE rows (the last chunk may have fewer rows)
+        grid_chunk = loaded_data[i:i + GRIDSIZE]
 
-def runSimulation(ticks:int=10):
+        # convert this chunk to a cellgrid
+        un_serialized_cellgrid = Cellgrid.unSerializeGrid(grid_chunk)
+
+        cellgrid_history.append(un_serialized_cellgrid)
+
+    return cellgrid_history
+
+def runSimulation(ticks:int, gen):
     for i in range(ticks):
-        printToFile()
+        addToHistory(gen) #TODO
         displayCells()
-        updateCells()
+        Cellgrid.updateCells()
         time.sleep(TICK_INTERVAL)
 
+def replaySimulation(): #TODO
+    cellgrid = readFile()
+    runSimulation()
+
 def mainMenu():
-    print("============\
-          1. run simulation\
-          2. simulation history\
-          3. exit\
-           ============")
+    print("============\n1. run simulation\n2. simulation history\n3. exit\n============")
 
 if __name__ == "__main__":
 
@@ -81,12 +72,20 @@ if __name__ == "__main__":
     if os.path.exists(DATAFILE):
         os.remove(DATAFILE)
 
-    # create cellmap
-    cellmap = [[Cell(random.choice([True, False, False])) \
-                for i in range(GRIDSIZE)] for j in range(GRIDSIZE)]
+    # create cellgrid
+    cellgrid = Cellgrid(GRIDSIZE)
+    generations = list()
     
-    mainMenu()
-    
-
-
-    runSimulation()
+    while True:
+        mainMenu()
+        men_v = int(function.inputBracket(""))
+        if men_v == 1:
+            sim_steps = int(function.inputBracket("Simulation steps"))
+            if sim_steps > 0:
+                runSimulation(sim_steps, generations)
+        elif men_v == 2:
+            replaySimulation()
+        elif men_v == 3:
+            exit()
+        else:
+            print("Not valid input")
