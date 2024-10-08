@@ -1,12 +1,16 @@
 import random
-import cell as Cell
+from cell import Cell
 
 class Cellgrid:
 
     def __init__(self, GRIDSIZE) -> None:
         self.GRIDSIZE = GRIDSIZE
+        self.cellgrid = list()
+        self.initializeGrid()
+
+    def initializeGrid(self):
         self.cellgrid = [[Cell(random.choice([True, False, False])) \
-                for i in range(GRIDSIZE)] for j in range(GRIDSIZE)]
+                        for i in range(self.GRIDSIZE)] for j in range(self.GRIDSIZE)]
         
     def updateCells(self):
         pos = [-1,0,1] # positions arount each cell in each direction
@@ -35,6 +39,11 @@ class Cellgrid:
             for cell in row:
                 cell.update()
 
+    def displayCellgrid(self):
+        for row in self.cellgrid:
+            print(" ".join(repr(cell) for cell in row))
+        print("\n")
+        
     def SerializeGrid(self):
         # convert to dict
         serial_cellgrid = [[Cell.serialize() for cell in row] \
