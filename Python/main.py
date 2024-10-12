@@ -2,10 +2,8 @@ import random, time
 from cellgrid import Cellgrid
 import functions as function
 
-GRIDSIZE = 8
+GRIDSIZE = 40
 TICK_INTERVAL = 1 # seconds
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# DATAFILE = os.path.join(BASE_DIR, 'cellgrid.json')
 
 # def validateFile(pathh:str) -> bool:
     # if not os.path.exists(pathh):
@@ -27,13 +25,9 @@ def MenuBorder(text:str):
     return f"\n{border}\n{text}\n{border}\n"
 
 if __name__ == "__main__":
-
-    # check if the file exists and delete it
-    # if os.path.exists(DATAFILE):
-        # os.remove(DATAFILE)
     
     while True:
-        menu_str = "1. run GoL\n2. change exit"
+        menu_str = "1. run GoL\n2. change gridsize\n3. exit"
         men_v = int(function.inputBracket(MenuBorder(menu_str)))
 
         if men_v == 1:
