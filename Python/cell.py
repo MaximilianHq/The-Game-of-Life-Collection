@@ -5,6 +5,7 @@ class Cell:
     def __init__(self, state:bool=False):
         self.state = state
         self.next_state = state
+        self.repetitions = 0
 
     def __repr__(self):
         # represent alive cell as ascii icon
@@ -28,3 +29,8 @@ class Cell:
 
     def update(self):
         self.state = self.next_state
+
+        if self.state == self.next_state and self.state == True:
+            self.repetitions += 1
+        else:
+            self.repetitions = 0

@@ -15,7 +15,8 @@ def runSimulation(cellg:Cellgrid, ticks:int = 10, visibility:bool = True):
         if visibility:
             cellg.displayCellgrid()
             time.sleep(TICK_INTERVAL)
-        cellg.updateCells()
+        if not cellg.updateCells() and not visibility:
+            break
     # if was previously hidden
     if not visibility:
         cellg.displayCellgrid()
