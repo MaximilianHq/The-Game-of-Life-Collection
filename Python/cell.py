@@ -22,15 +22,15 @@ class Cell:
         population = sum(1 for cell in neighbors if cell.state)
         
         # apply gamerules
-        if (population < 2 or population > 3) and self.state == True:
+        if (population < 2 or population > 3) and self.state:
             self.next_state = False
-        elif population == 3 and self.state == False:
+        elif population == 3 and not self.state:
             self.next_state = True
 
     def update(self):
         self.state = self.next_state
 
-        if self.state == self.next_state and self.state == True:
+        if self.state == self.next_state and self.state:
             self.repetitions += 1
         else:
             self.repetitions = 0
